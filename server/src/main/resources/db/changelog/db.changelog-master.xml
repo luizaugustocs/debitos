@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="create-table-pessoa" author="luizaugustocs">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pessoa"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="pessoa">
+            <column name="id" type="number(10)">
+                <constraints primaryKey="true" primaryKeyName="pk_pessoa"/>
+            </column>
+            <column name="cpf" type="varchar(11)"/>
+            <column name="nome" type="varchar(250)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-debito" author="luiz.souza">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="debito"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="debito">
+            <column name="id" type="number(10)">
+                <constraints primaryKey="true" primaryKeyName="pk_debito"/>
+            </column>
+            <column name="data_lancamento" type="date"/>
+            <column name="id_pessoa" type="number(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="debito"
+                                 baseColumnNames="id_pessoa"
+                                 constraintName="fk_debito_pessoa"
+                                 referencedTableName="pessoa"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="create-table-parcela" author="luiz.souza">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="parcela"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="parcela">
+            <column name="id" type="number(10)">
+                <constraints primaryKey="true" primaryKeyName="pk_parcela"/>
+            </column>
+            <column name="data_vencimento" type="date"/>
+            <column name="valor" type="number(15,2)"/>
+            <column name="id_debito" type="number(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="parcela"
+                                 baseColumnNames="id_debito"
+                                 constraintName="fk_parcela_debito"
+                                 referencedTableName="debito"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
